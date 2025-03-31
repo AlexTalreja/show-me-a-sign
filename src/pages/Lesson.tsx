@@ -67,16 +67,32 @@ const Lesson = () => {
     setWebcamSupported(isCameraSupported());
   }, []);
 
+  useEffect(() => {
+    if (!lesson || !latestPrediction || status !== null) return;
+  
+    const currentLetter = lesson.content[currentLetterIndex];
+    if (
+      latestPrediction.letter === currentLetter &&
+      latestPrediction.confidence > 0.75
+    ) {
+      handleAnswerCheck(true);
+    }
+  }, [latestPrediction, lesson, currentLetterIndex, status]);
+
+  // const handlePrediction = (prediction: any) => {
+  //   setLatestPrediction(prediction);
+    
+  //   if (lesson && currentLetterIndex !== null && status === null) {
+  //     const currentLetter = lesson.content[currentLetterIndex];
+      
+  //     if (prediction.letter === currentLetter && prediction.confidence > 0.75) {
+  //       handleAnswerCheck(true);
+  //     }
+  //   }
+  // };
+
   const handlePrediction = (prediction: any) => {
     setLatestPrediction(prediction);
-    
-    if (lesson && currentLetterIndex !== null && status === null) {
-      const currentLetter = lesson.content[currentLetterIndex];
-      
-      if (prediction.letter === currentLetter && prediction.confidence > 0.75) {
-        handleAnswerCheck(true);
-      }
-    }
   };
 
   const handleNextLetter = () => {
