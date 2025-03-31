@@ -247,7 +247,7 @@ class ASLRecognizer:
 
 def main():
     # Path to dataset
-    dataset_path = "src/aslwireframemodified"
+    dataset_path = "../data/aslwireframemodified"
     
     # Create model directory if it doesn't exist
     model_dir = "models"
