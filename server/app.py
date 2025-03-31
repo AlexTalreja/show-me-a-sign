@@ -26,7 +26,7 @@ except ImportError as e:
 # Import the ASL recognition components from secret-sauce
 try:
     from asl_recognition import ASLRecognizer
-    from main import handDetector
+    from backend import handDetector
 except ImportError as e:
     print(f"Error importing ASL recognition components: {e}")
     print("Make sure the secret-sauce directory is properly set up")
