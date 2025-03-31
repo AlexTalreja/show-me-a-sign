@@ -35,3 +35,58 @@ The application consists of two main components:
 <img src="Backend2.png" alt="Model and geometry agree" width="500"/>
 <img src="Backend3.png" alt="Model medium confidence and geometry mixed" width="500"/>
 
+## Usage
+
+Follow these steps to set up and run the project locally.
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+```
+
+### 2. Set Up Python Environment
+Create and activate a virtual environment:
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run the Backend (Python)
+In the **same terminal and virtual environment**, run:
+```bash
+python3 app.py
+```
+This will start the backend server.
+
+
+### 4. Set Up the Frontend (Node.js)
+
+In a **new terminal**, **do not activate the Python virtual environment**.
+
+1. Install Node.js LTS version (22.4 recommended) using `nvm`:
+```bash
+nvm install --lts
+```
+
+2. Install frontend dependencies:
+```bash
+npm install
+```
+
+3. Start the frontend development server:
+```bash
+npm run dev
+```
+
+- The **backend** (Python) will be running from your first terminal.
+- The **frontend** (Node.js) will be running from your second terminal.
+
+> 💡 Keep both terminals open for full functionality while developing.
+
+
