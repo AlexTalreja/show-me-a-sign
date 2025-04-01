@@ -23,15 +23,79 @@ The application consists of two main components:
 - Real-time webcam streaming with WebRTC
 - User authentication and progress tracking via Supabase
 
-<img src="LessonImage.png" alt="Lessons" width="500"/>
-
 ### 2. Backend (Python + Flask)
+- Hand tracking using computer vision (MediaPipe and OpenCV)
+- ASL recognition with our custom-trained TensorFlow Keras model
+- Real-time machine learning prediction with both CNN model and MediaPipe geometry-based analysis
 - Flask-based WebSocket server for processing webcam frames
-- Hand tracking using computer vision (OpenCV)
-- ASL recognition with a trained machine learning model
-- Real-time prediction with both CNN model and geometry-based analysis
+
+### 3. Model Training (TensorFlow + OpenCV)
+- Trained on a custom grayscale ASL wireframe dataset (~20,000 images, subset of https://www.kaggle.com/datasets/dylanpallickara129/asl-alphabet-wireframes)
+- Dataset augmented manually by mirroring images and various transformations using TensorFlow `ImageDataGenerator`
+- CNN architecture with 3 Conv+Pooling layers, dropout, and dense layers
+- 80/20 train-test split with stratified sampling
+- Model saved in `.h5` format with class mapping and training visualizations
+
+### Images
+
+<img src="LessonImage.png" alt="Lessons" width="500"/>
 
 <img src="Backend1.png" alt="Model with high confidence" width="500"/>
 <img src="Backend2.png" alt="Model and geometry agree" width="500"/>
 <img src="Backend3.png" alt="Model medium confidence and geometry mixed" width="500"/>
+
+## Usage
+
+Follow these steps to set up and run the project locally.
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+```
+
+### 2. Set Up Python Environment
+Create and activate a virtual environment:
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run the Backend (Python)
+In the **same terminal and virtual environment**, run:
+```bash
+python3 app.py
+```
+This will start the backend server.
+
+
+### 4. Set Up the Frontend (Node.js)
+
+In a **new terminal**, **do not activate the Python virtual environment**.
+
+1. Install Node.js LTS version (22.4 recommended) using `nvm`:
+```bash
+nvm install --lts
+```
+
+2. Install frontend dependencies:
+```bash
+npm install
+```
+
+3. Start the frontend development server:
+```bash
+npm run dev
+```
+
+- The **backend** (Python) will be running from your first terminal.
+- The **frontend** (Node.js) will be running from your second terminal.
+
+> 💡 Keep both terminals open for full functionality while developing.
+
 
