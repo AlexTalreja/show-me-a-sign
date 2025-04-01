@@ -1,5 +1,8 @@
 # Show Me A Sign - An Interactive ASL Learning Platform
 
+## Video Demos
+Full App Walkthrough: https://youtu.be/MBmjt37I5aQ
+
 ## Project Overview
 
 Show Me A Sign is an interactive web application designed to help users learn American Sign Language (ASL) through real-time webcam interaction. Using computer vision and machine learning, the platform provides immediate feedback on sign language gestures, helping users practice and master ASL.
