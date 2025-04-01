@@ -84,7 +84,7 @@ const Navigation = () => {
       <div className="container mx-auto px-4 flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <Hand className="h-8 w-8 text-accent" />
-          <span className="text-xl font-bold tracking-tight text-primary">Give Me A Sign</span>
+          <span className="text-xl font-bold tracking-tight text-primary">Show Me A Sign</span>
         </Link>
 
         {isMobile ? (

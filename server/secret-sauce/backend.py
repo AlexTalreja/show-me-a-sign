@@ -5,7 +5,6 @@ import mediapipe as mp
 import math
 import numpy as np
 
-# Import the ASLRecognizer class (make sure asl_recognition.py is in the same folder or installed as a module)
 from asl_recognition import ASLRecognizer
 
 class handDetector():
@@ -31,10 +30,8 @@ class handDetector():
         self.use_asl = use_asl
         self.asl_recognizer = None
         
-        # We'll keep track of top-3 predictions here
         self.asl_top3 = []
         
-        # For stable letter logic (if you want the best guess from the model)
         self.asl_letter = None
         self.asl_confidence = 0.0
         
@@ -72,7 +69,6 @@ class handDetector():
         self.lmList = []
         
         if self.results.multi_hand_landmarks:
-            # Get the hand we're interested in
             try:
                 myHand = self.results.multi_hand_landmarks[handNo]
             except IndexError:
@@ -115,14 +111,14 @@ class handDetector():
             y = int(lm.y * (img_size - 1))
             points.append((x, y))
         
-        # Draw the connections
+        # Connections
         for connection in self.mpHands.HAND_CONNECTIONS:
             start_idx, end_idx = connection
             x1, y1 = points[start_idx]
             x2, y2 = points[end_idx]
             cv2.line(wireframe, (x1, y1), (x2, y2), (255), 2)
         
-        # Draw the points
+        # Points
         for (x, y) in points:
             cv2.circle(wireframe, (x, y), 4, (255), cv2.FILLED)
         
@@ -134,17 +130,14 @@ class handDetector():
         then get the top 3 ASL predictions and store them internally (self.asl_top3).
         """
         try:
-            # 1) Extract wireframe
             wireframe_img = self._extract_wireframe(handLms, img_size=256)
-            # 2) Resize to 64x64
             wireframe_resized = cv2.resize(wireframe_img, (64, 64), interpolation=cv2.INTER_AREA)
-            # 3) Get top-3 predictions
             self.asl_top3 = self.asl_recognizer.predict_top_k(wireframe_resized, k=3)
             
-            # The best guess is the first of the top 3
+            # Get the first of the top 3
             self.asl_letter, self.asl_confidence = self.asl_top3[0]
             
-            # Display them above the bounding box
+            # Display predictions above the bounding box
             for i, (letter, conf) in enumerate(self.asl_top3):
                 y_offset = 30 * i
                 cv2.putText(
@@ -166,7 +159,7 @@ class handDetector():
         return self.asl_letter, self.asl_confidence
     
     # ----------------------------------------------------------------
-    # The original geometry-based finger counting or letter detection:
+    # GEOMETRY ALGORITHM (kinda just hardcoded lol - ideally wont need this if have more time to train better model):
     # ----------------------------------------------------------------
     def fingersUp(self):
         """Count fingers (example approach)."""
@@ -203,19 +196,20 @@ class handDetector():
 
 
 def backend():
-    # Camera
+    # Init Camera
     hCam, wCam = 480, 640
-    cap = cv2.VideoCapture(0)
+    # 0 for front facing webcam, 1 for external webcam
+    cap = cv2.VideoCapture(0) # KEEP ON 0 for macbook demo!
     cap.set(4, hCam)
     cap.set(3, wCam)
 
-    # Initialize detector with use_asl=True to load the model
+    # Init detector
     detector = handDetector(detectionCon=0.5, use_asl=True)
     debug = True
     
 
     pTime = 0
-    # Custom combination rules dictionary for when model and geometry disagree
+    # Custom combination rules dictionary for when model and geometry disagree lol
     # Format: (model_letter, geometry_letter): confirmed_letter
     custom_rules = {
         ("H", "S"): "A",  # When model predicts F but geometry predicts H, confirm as F
@@ -260,7 +254,6 @@ def backend():
         geometry_letter = ""
         if len(lmList) != 0:
             try:
-                # Re-use your geometry logic from your old main.py:
                 finger_mcp = [5, 9, 13, 17]
                 finger_dip = [6, 10, 14, 18]
                 finger_pip = [7, 11, 15, 19]
@@ -279,8 +272,6 @@ def backend():
                           and lmList[finger_tip[i]][1] > lmList[finger_dip[i]][1]):
                         fingers.append(0.5)
                 
-                # Apply your if-conditions to assign geometry_letter
-                # (Only partial examples shown here; keep the rest from your code)
                 if (lmList[3][2] > lmList[4][2]) and (lmList[3][1] > lmList[6][1]) and (lmList[4][2] < lmList[6][2]) and fingers.count(0) == 4:
                     geometry_letter = "A"
                 elif (lmList[3][1] > lmList[4][1]) and fingers.count(1) == 4:
@@ -364,33 +355,28 @@ def backend():
                     if (len(fingers)==4 and fingers[3] == 1):
                         geometry_letter = "Y"
                 
-                # Once geometry_letter is found, we can show it
-                # But let's only "confirm" it if it's in top-3 from the model
+               
+                # Only "confirm" geom guess it if it's in top-3 from the model
                 top3 = detector.get_asl_top3()  # returns e.g. [("A", 0.95), ("B", 0.03), ...]
                 top3_letters = [pair[0] for pair in top3]
 
-                # If geometry_letter is in the top-3 predictions, confirm
+                # If geom guess is in the top-3 predictions, confirm
                 confirmed_letter = ""
                 if geometry_letter and (geometry_letter in top3_letters):
                     confirmed_letter = geometry_letter
-                # Otherwise, we do not confirm.
 
-                # 3) Draw geometry's guessed letter (raw guess) - TOP LEFT
                 if debug:
                     cv2.putText(img, f"Geometry guess: {geometry_letter}",
                                 (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
                 
-                # 4) Draw the model's best guess
                 model_best_letter, model_best_conf = detector.get_asl_best()
                 if debug:
                     if model_best_letter:
                         cv2.putText(img, f"Model best: {model_best_letter} ({model_best_conf:.2f})",
                                     (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
                 
-                # 5) Determine confirmed letter using all available information
                 confirmed_letter = ""
                 
-                # Check if geometry is not detecting anything
                 if not geometry_letter and model_best_letter:
                     # If geometry is empty but model has a prediction, use model
                     confirmed_letter = model_best_letter
@@ -414,7 +400,6 @@ def backend():
                             cv2.putText(img, f"Custom rule applied", 
                                     (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     else:
-                        # Default to top-3 check if no specific rule exists
                         top3 = detector.get_asl_top3()
                         top3_letters = [pair[0] for pair in top3]
                         
@@ -424,9 +409,8 @@ def backend():
                                 cv2.putText(img, "Geometry in model's top-3", 
                                            (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 165, 0), 2)
                 
-                # 6) Display the confirmed letter (if any)
                 if confirmed_letter:
-                    # Smaller rectangle and text
+                    # Display format of confirmed letter
                     cv2.rectangle(img, (28, 355), (128, 455), (0, 255, 0), cv2.FILLED)
                     cv2.putText(img, confirmed_letter, (45, 425),
                                cv2.FONT_HERSHEY_COMPLEX, 3, (255, 0, 0), 8)
