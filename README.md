@@ -2,6 +2,7 @@
 
 ## Video Demos
 Full App Walkthrough: https://youtu.be/MBmjt37I5aQ
+Backend Demo (Detection + Prediction): https://youtu.be/IXH82lJ658s
 
 ## Project Overview
 
